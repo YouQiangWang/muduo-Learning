@@ -21,16 +21,16 @@ const int Channel::kNoneEvent = 0;
 const int Channel::kReadEvent = POLLIN | POLLPRI;
 const int Channel::kWriteEvent = POLLOUT;
 
-Channel::Channel(EventLoop* loop, int fd__)
-  : loop_(loop),
-    fd_(fd__),
-    events_(0),
-    revents_(0),
-    index_(-1),
-    logHup_(true),
-    tied_(false),
-    eventHandling_(false),
-    addedToLoop_(false)
+Channel::Channel(EventLoop *loop, int fd__)
+    : loop_(loop),
+      fd_(fd__),
+      events_(0),
+      revents_(0),
+      index_(-1),
+      logHup_(true),
+      tied_(false),
+      eventHandling_(false),
+      addedToLoop_(false)
 {
 }
 
@@ -44,12 +44,12 @@ Channel::~Channel()
   }
 }
 
-void Channel::tie(const std::shared_ptr<void>& obj)
+void Channel::tie(const std::shared_ptr<void> &obj)
 {
   tie_ = obj;
   tied_ = true;
 }
-
+// private 函数，每当关注的I/O事件变化时进行更新
 void Channel::update()
 {
   addedToLoop_ = true;
@@ -62,7 +62,7 @@ void Channel::remove()
   addedToLoop_ = false;
   loop_->removeChannel(this);
 }
-
+//Channel的核心，由Event::loop()调用，其功能是根据revents_的值分别调用不同的用户回调
 void Channel::handleEvent(Timestamp receiveTime)
 {
   std::shared_ptr<void> guard;
@@ -90,7 +90,8 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
     {
       LOG_WARN << "fd = " << fd_ << " Channel::handle_event() POLLHUP";
     }
-    if (closeCallback_) closeCallback_();
+    if (closeCallback_)
+      closeCallback_();
   }
 
   if (revents_ & POLLNVAL)
@@ -100,15 +101,18 @@ void Channel::handleEventWithGuard(Timestamp receiveTime)
 
   if (revents_ & (POLLERR | POLLNVAL))
   {
-    if (errorCallback_) errorCallback_();
+    if (errorCallback_)
+      errorCallback_();
   }
   if (revents_ & (POLLIN | POLLPRI | POLLRDHUP))
   {
-    if (readCallback_) readCallback_(receiveTime);
+    if (readCallback_)
+      readCallback_(receiveTime);
   }
   if (revents_ & POLLOUT)
   {
-    if (writeCallback_) writeCallback_();
+    if (writeCallback_)
+      writeCallback_();
   }
   eventHandling_ = false;
 }

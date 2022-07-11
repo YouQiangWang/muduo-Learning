@@ -115,11 +115,11 @@ uint16_t InetAddress::port() const
 
 static __thread char t_resolveBuffer[64 * 1024];
 
-bool InetAddress::resolve(StringArg hostname, InetAddress* out)
+bool InetAddress::resolve(StringArg hostname, InetAddress *out)
 {
   assert(out != NULL);
   struct hostent hent;
-  struct hostent* he = NULL;
+  struct hostent *he = NULL;
   int herrno = 0;
   memZero(&hent, sizeof(hent));
 
@@ -127,7 +127,7 @@ bool InetAddress::resolve(StringArg hostname, InetAddress* out)
   if (ret == 0 && he != NULL)
   {
     assert(he->h_addrtype == AF_INET && he->h_length == sizeof(uint32_t));
-    out->addr_.sin_addr = *reinterpret_cast<struct in_addr*>(he->h_addr);
+    out->addr_.sin_addr = *reinterpret_cast<struct in_addr *>(he->h_addr);
     return true;
   }
   else

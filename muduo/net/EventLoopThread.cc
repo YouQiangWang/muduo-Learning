@@ -13,14 +13,14 @@
 using namespace muduo;
 using namespace muduo::net;
 
-EventLoopThread::EventLoopThread(const ThreadInitCallback& cb,
-                                 const string& name)
-  : loop_(NULL),
-    exiting_(false),
-    thread_(std::bind(&EventLoopThread::threadFunc, this), name),
-    mutex_(),
-    cond_(mutex_),
-    callback_(cb)
+EventLoopThread::EventLoopThread(const ThreadInitCallback &cb,
+                                 const string &name)
+    : loop_(NULL),
+      exiting_(false),
+      thread_(std::bind(&EventLoopThread::threadFunc, this), name),
+      mutex_(),
+      cond_(mutex_),
+      callback_(cb)
 {
 }
 
@@ -36,12 +36,12 @@ EventLoopThread::~EventLoopThread()
   }
 }
 
-EventLoop* EventLoopThread::startLoop()
+EventLoop *EventLoopThread::startLoop()
 {
   assert(!thread_.started());
   thread_.start();
 
-  EventLoop* loop = NULL;
+  EventLoop *loop = NULL;
   {
     MutexLockGuard lock(mutex_);
     while (loop_ == NULL)
@@ -70,8 +70,7 @@ void EventLoopThread::threadFunc()
   }
 
   loop.loop();
-  //assert(exiting_);
+  // assert(exiting_);
   MutexLockGuard lock(mutex_);
   loop_ = NULL;
 }
-

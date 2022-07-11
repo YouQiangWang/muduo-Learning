@@ -16,17 +16,16 @@
 
 namespace muduo
 {
-namespace net
-{
+    namespace net
+    {
 
-class BoilerPlate : noncopyable
-{
- public:
+        class BoilerPlate : noncopyable
+        {
+        public:
+        private:
+        };
 
- private:
-};
-
+    }
 }
-}
 
-#endif  // MUDUO_NET_BOILERPLATE_H
+#endif // MUDUO_NET_BOILERPLATE_H

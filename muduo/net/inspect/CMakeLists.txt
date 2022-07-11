@@ -4,8 +4,9 @@ set(inspect_SRCS
   ProcessInspector.cc
   SystemInspector.cc
   )
-
+# 生成链接库
 add_library(muduo_inspect ${inspect_SRCS})
+# 添加链接库(muduo_inspect需要链接一个名为muduo_http的库)
 target_link_libraries(muduo_inspect muduo_http)
 
 if(TCMALLOC_INCLUDE_DIR AND TCMALLOC_LIBRARY)

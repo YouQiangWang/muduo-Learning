@@ -22,12 +22,12 @@
 using namespace muduo;
 using namespace muduo::net;
 
-Acceptor::Acceptor(EventLoop* loop, const InetAddress& listenAddr, bool reuseport)
-  : loop_(loop),
-    acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),
-    acceptChannel_(loop, acceptSocket_.fd()),
-    listening_(false),
-    idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
+Acceptor::Acceptor(EventLoop *loop, const InetAddress &listenAddr, bool reuseport)
+    : loop_(loop),
+      acceptSocket_(sockets::createNonblockingOrDie(listenAddr.family())),
+      acceptChannel_(loop, acceptSocket_.fd()),
+      listening_(false),
+      idleFd_(::open("/dev/null", O_RDONLY | O_CLOEXEC))
 {
   assert(idleFd_ >= 0);
   acceptSocket_.setReuseAddr(true);
@@ -56,7 +56,7 @@ void Acceptor::handleRead()
 {
   loop_->assertInLoopThread();
   InetAddress peerAddr;
-  //FIXME loop until no more
+  // FIXME loop until no more
   int connfd = acceptSocket_.accept(&peerAddr);
   if (connfd >= 0)
   {
@@ -86,4 +86,3 @@ void Acceptor::handleRead()
     }
   }
 }
-

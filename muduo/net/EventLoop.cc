@@ -32,6 +32,9 @@ namespace
 
   int createEventfd()
   {
+    // eventfd是linux 2.6.22后系统提供的一个轻量级的进程间通信的系统调用，eventfd通过一个进程间共享的64位计数器完成进程间通信
+    // EFD_CLOEXEC : fork子进程时不继承，对于多线程的程序设上这个值不会有错的。
+    // EFD_NONBLOCK: 文件会被设置成O_NONBLOCK，读操作不阻塞。若不设置，一直阻塞直到计数器中的值大于0。
     int evtfd = ::eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     if (evtfd < 0)
     {
@@ -122,6 +125,7 @@ void EventLoop::loop()
     for (Channel *channel : activeChannels_)
     {
       currentActiveChannel_ = channel;
+      //响应I/O事件
       currentActiveChannel_->handleEvent(pollReturnTime_);
     }
     currentActiveChannel_ = NULL;
