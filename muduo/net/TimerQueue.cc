@@ -29,6 +29,15 @@ namespace muduo
 
       int createTimerfd()
       {
+
+        /**
+         * 创建一个定时器对象，同时返回一个与之关联的文件描述符
+         *
+         * @param clock_id:标识指定的时钟计数器，可选值（CLOCK_REALTIME、CLOCK_MONOTONIC。。。）
+         *  CLOCK_REALTIME:系统实时时间,随系统实时时间改变而改变,即从UTC1970-1-1 0:0:0开始计时,中间时刻如果系统时间被用户改成其他,则对应的时间相应改变
+         *  CLOCK_MONOTONIC:从系统启动这一刻起开始计时,不受系统时间被用户改变的影响
+         * @param flags：参数flags（TFD_NONBLOCK(非阻塞模式)/TFD_CLOEXEC（表示当程序执行exec函数时本fd将被系统自动关闭,表示不传递）
+         */
         int timerfd = ::timerfd_create(CLOCK_MONOTONIC,
                                        TFD_NONBLOCK | TFD_CLOEXEC);
         if (timerfd < 0)
@@ -71,7 +80,18 @@ namespace muduo
         struct itimerspec oldValue;
         memZero(&newValue, sizeof newValue);
         memZero(&oldValue, sizeof oldValue);
+        // it_interval  /* Interval for periodic timer （定时间隔周期）*/
+        // it_value;    /* Initial expiration (第一次超时时间)*/
         newValue.it_value = howMuchTimeFromNow(expiration);
+        /**
+         * 设置新的超时时间，并开始计时,能够启动和停止定时器
+         *
+         * @param timerfd: timerfd_create函数返回的文件句柄
+         * @param flags：参数flags为1代表设置的是绝对时间（TFD_TIMER_ABSTIME 表示绝对定时器）；为0代表相对时间。
+         * @param newValue: 参数newValue指定定时器的超时时间以及超时间隔时间
+         * @param oldValue: 如果oldValue不为NULL, oldValue返回之前定时器设置的超时时间，具体参考timerfd_gettime()函数
+         *
+         */
         int ret = ::timerfd_settime(timerfd, 0, &newValue, &oldValue);
         if (ret)
         {
@@ -111,7 +131,7 @@ TimerQueue::~TimerQueue()
     delete timer.second;
   }
 }
-
+//添加定时器
 TimerId TimerQueue::addTimer(TimerCallback cb,
                              Timestamp when,
                              double interval)
@@ -121,7 +141,7 @@ TimerId TimerQueue::addTimer(TimerCallback cb,
       std::bind(&TimerQueue::addTimerInLoop, this, timer));
   return TimerId(timer, timer->sequence());
 }
-
+//注销定时器
 void TimerQueue::cancel(TimerId timerId)
 {
   loop_->runInLoop(
@@ -132,7 +152,7 @@ void TimerQueue::addTimerInLoop(Timer *timer)
 {
   loop_->assertInLoopThread();
   bool earliestChanged = insert(timer);
-
+  //插入最早达到超时时间的timer时需要唤醒loop线程
   if (earliestChanged)
   {
     resetTimerfd(timerfd_, timer->expiration());
@@ -209,6 +229,7 @@ void TimerQueue::reset(const std::vector<Entry> &expired, Timestamp now)
   for (const Entry &it : expired)
   {
     ActiveTimer timer(it.second, it.second->sequence());
+    //周期性的定时器需要再次启动并加入到定时器列表和活跃的定时器集合中
     if (it.second->repeat() && cancelingTimers_.find(timer) == cancelingTimers_.end())
     {
       it.second->restart(now);
@@ -223,11 +244,13 @@ void TimerQueue::reset(const std::vector<Entry> &expired, Timestamp now)
 
   if (!timers_.empty())
   {
+    //下一个最早超时的定时器的时间戳？
     nextExpire = timers_.begin()->second->expiration();
   }
-
+  //有效时间戳
   if (nextExpire.valid())
   {
+    // wake up loop by timerfd_settime()
     resetTimerfd(timerfd_, nextExpire);
   }
 }

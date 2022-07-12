@@ -45,7 +45,7 @@ class AtomicIntegerT : noncopyable
   T getAndAdd(T x)
   {
     // in gcc >= 4.7: __atomic_fetch_add(&value_, x, __ATOMIC_SEQ_CST)
-    return __sync_fetch_and_add(&value_, x);
+    return __sync_fetch_and_add(&value_, x);//先fetch然后自加,返回的是自加以前的值
   }
 
   T addAndGet(T x)

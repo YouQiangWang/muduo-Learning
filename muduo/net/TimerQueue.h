@@ -46,7 +46,7 @@ namespace muduo
       TimerId addTimer(TimerCallback cb,
                        Timestamp when,
                        double interval);
-
+      //注销定时器（TimerId同时包含Timer*和一个全局唯一的序列号sequence_用于找到需要注销的Timer对象）
       void cancel(TimerId timerId);
 
     private:

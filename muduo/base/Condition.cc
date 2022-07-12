@@ -23,4 +23,3 @@ bool muduo::Condition::waitForSeconds(double seconds)
   MutexLock::UnassignGuard ug(mutex_);
   return ETIMEDOUT == pthread_cond_timedwait(&pcond_, mutex_.getPthreadMutex(), &abstime);
 }
-

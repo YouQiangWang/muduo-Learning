@@ -29,7 +29,7 @@ namespace muduo
     ///
     /// TCP server, supports single-threaded and thread-pool models.
     ///
-    /// This is an interface class, so don't expose too much details.
+     /// This is an interface class, so don't expose too much details.
     class TcpServer : noncopyable
     {
     public:
