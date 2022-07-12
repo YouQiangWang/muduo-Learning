@@ -15,7 +15,8 @@
 
 
 ## TimerQueue 
->> 这个类是用来给Eventloop加上定时器功能，传统的Reactor通过select和poll的等待时间来实现定时。因为仙子啊Linux有了timerfd,便可以用和处理IO时间相同的方式来处理定时，代码的一致性更好。
+>> 这个类是用来给Eventloop加上定时器功能，传统的Reactor通过select和poll的等待时间来实现定时。因为现在Linux有了timerfd,便可以用和处理IO事件相同的方式来处理定时，代码的一致性更好。
+-　timerfd是Linux为用户程序提供的一个定时器接口。这个接口基于文件描述符，通过文件描述符的可读事件进行超时通知，因此可以配合select/poll/epoll等使用
 - TimerQueue需要快速的根据当前时间找到已经到期的Timer, 还要高效的添加和删除Timer。
 - TimerQueue使用timerfdChannel_来观察timerfd_上的readable事件
 - std::pair<Timestamp, Timer *> 这个数据结构：用来区分两个Timer到期时间相同，它们本身的地址也必定不同

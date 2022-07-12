@@ -125,7 +125,7 @@ void EventLoop::loop()
     for (Channel *channel : activeChannels_)
     {
       currentActiveChannel_ = channel;
-      //响应I/O事件
+      //响应IO事件
       currentActiveChannel_->handleEvent(pollReturnTime_);
     }
     currentActiveChannel_ = NULL;

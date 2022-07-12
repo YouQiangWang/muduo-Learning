@@ -49,7 +49,7 @@ void Channel::tie(const std::shared_ptr<void> &obj)
   tie_ = obj;
   tied_ = true;
 }
-// private 函数，每当关注的I/O事件变化时进行更新
+// private 函数，每当关注的IO事件变化时进行更新
 void Channel::update()
 {
   addedToLoop_ = true;

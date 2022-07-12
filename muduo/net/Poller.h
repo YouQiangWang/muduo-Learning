@@ -38,7 +38,7 @@ namespace muduo
 
       /// Polls the I/O events.
       /// Must be called in the loop thread.
-      /*
+      /**
        * 获得当前活动的IO事件，然后填充到调用方传入的activeChannels
        * 返回epoll_wait/poll函数return的时刻（Timestamp对象）
        */
